@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('partials/head',{
+    title: 'Listado de Peliculas'
+}) %>
+<body>
+    <header>
+        <div class="d-fex">
+            <%- include('partials/header',{
+                genres
+            }) %>
+        </div>
+        
+    </header>
+    <h1>LISTADO DE PELÍCULAS</h1>
+    <br>
+    
+    <br>
+
+    <div class="container border border-secondary p-0">
+        <div class="d-flex justify-content-between border border-bottom-secondary p-2 align-items-center">
+            <div class="d-flex gap-1 align-items-center">
+                <a class="" href="/">Inicio </a>
+                <a class=" text text-dark" style="cursor:auto"> / Movies</a>
+            </div>
+            
+            <a class="btn btn-outline-dark" href="/movies/add">Agregar un Género</a>
+            
+        </div>
+        <div class="row p-3">
+            <div class="col-12">
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Ranking</th>
+                        <th scope="col">Active</th>
+                        <th scope="col">Peliculas</th>
+                        <th scope="col">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <% genres.forEach(genre => { %>
+                            <tr>
+                                <th scope="row"><%= genre.id %></th>
+                                <td><%= genre.name %></td>
+                                <td><%= genre.ranking %></td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" <%= genre.active && 'checked' %>>
+                                    </div>
+                                </td>
+                                <td>
+                                    <% if (genre.movies.length) { %>
+                                     
+                                   
+                                    <div class="accordion accordion-flush" id="accordionFlushExample">
+                                        <div class="accordion-item">
+                                          <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse<%= genre.id %>" aria-expanded="false" aria-controls="flush-collapse<%= genre.id %>">
+                                              <span><%= genre.movies.length %> peliculas</span>
+                                            </button>
+                                          </h2>
+                                          <div id="flush-collapse<%= genre.id %>" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                                            <div class="accordion-body">
+                                                <ul>
+                                                    <% genre.movies.forEach(movie => { %>
+                                                        <li><a href="/movie/detail/<%= movie.id %>"><%= movie.title %></a></li>
+                                                    <% }) %>
+                                                </ul>
+                                            </div>
+                                          </div>
+                                        </div>
+                                    </div>
+                                    <% }%>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a href="/genre/detail/<%= genre.id %>" class="btn btn-primary"><i class="bi bi-eye"></i></a>
+                                        <a href="/genre/edit/<%= genre.id %>" class="btn btn-success"><i class="bi bi-pencil"></i></a>
+                                        <a href="#" class="btn btn-danger"><i class="bi bi-trash3"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                  </table>
+            </div>
+        </div>
+    </div>
+    <!-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>

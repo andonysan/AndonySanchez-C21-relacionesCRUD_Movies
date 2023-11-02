@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> </title>
+    <link rel='stylesheet' href='/css/style.css' />
+
+</head> -->
+<%- include('partials/head',{
+    title
+}) %>
+
+<body>
+    <figure>
+        <img src="/img/logo-DH.png" alt="Logo Digital House">
+    </figure>
+    <!-- <h1><%= title %> </h1>     -->
+    <br>
+    <!-- --------------------------------------------------------------- -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-betweem">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="/movies">Peliculas</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Pelicula: <%= title %></li>
+                </ol>
+              </nav>
+        </div>
+        <div class="card-body" >
+            <div class="row ">
+              <div class="col-md-4">
+                <img src="/img/<%= image %>" class="img-fluid rounded-start w-100" alt="...">
+              </div>
+              <div class="col-md-8">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item fs-3"><b><%= title.toUpperCase() %></b></li>
+                    <li class="list-group-item"><b>RATING: </b><%= rating %></li>
+                    <li class="list-group-item"><b>AWARDS: </b><%= awards %></li>
+                    <li class="list-group-item"><b>LENGTH: </b><%= length + ' min'%></li>
+                    <li class="list-group-item"><b>RELEASE DATE: </b><%= moment(release_date).format('DD/MM/YYYY') %> </li>
+                </ul>
+                <h5>Actores</h5>
+                <ul class="list-group list-group-flush">
+                    <% actors.forEach(actor => { %>
+                        <li class="list-group-item"><%= actor.first_name %><b> <%= actor.last_name %> </b></li>
+                    <% }) %>
+                </ul>
+              </div>
+            </div>
+        </div>
+    </div>
+    <!-- --------------------------------------------------------------- -->
+    <!-- <p>RATING: <%= rating %> </p>
+    <p>AWARDS: <%= awards %> </p>
+    <p>LENGTH: <%= length + ' min'%> </p>
+    <p>RELEASE DATE: <%= moment(release_date).format('DD/MM/YYYY') %> </p>
+    <br> -->
+
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('partials/head',{
+    title: 'Listado de Peliculas'
+}) %>
+<body>
+    <header>
+        <div class="d-fex">
+            <%- include('partials/header',{
+                genres
+            }) %>
+        </div>
+        
+    </header>
+    <h1>LISTADO DE PELÍCULAS</h1>
+    <br>
+    
+    <br>
+
+    <div class="container border border-secondary p-0">
+        <div class="d-flex justify-content-between border border-bottom-secondary p-2 align-items-center">
+            <div class="d-flex gap-1 align-items-center">
+                <a class="" href="/">Inicio </a>
+                <a class=" text text-dark" style="cursor:auto"> / Movies</a>
+            </div>
+            
+            <a class="btn btn-outline-dark" href="/movies/add">Agregar una Pelicula</a>
+            
+        </div>
+        <div class="row p-3">
+            <div class="col-12">
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Rating</th>
+                        <th scope="col">Premios</th>
+                        <th scope="col">Género</th>
+                        <th scope="col">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <% movies.forEach(movie => { %>
+                            <tr>
+                                <th scope="row"><%= movie.id %></th>
+                                <td><%= movie.title %></td>
+                                <td><%= movie.rating %></td>
+                                <td><%= movie.awards %></td>
+                                <td><%= movie.genre?.name %></td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a href="/movies/detail/<%= movie.id %>" class="btn btn-primary"><i class="bi bi-eye"></i></a>
+                                        <a href="/movies/edit/<%= movie.id %>" class="btn btn-success"><i class="bi bi-pencil"></i></a>
+                                        <!-- <a href="#" class="btn btn-danger"><i class="bi bi-trash3"></i></a> -->
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal<%= movie.id %>">
+                                            <i class="bi bi-trash3"></i>
+                                        </button>
+                                        
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModal<%= movie.id %>" tabindex="-1" aria-labelledby="exampleModal<%= movie.id %>Label" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="exampleModal<%= movie.id %>Label">Advertencia</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>¿Estás seguro que quieres eliminar <b><%= movie.title %></b>?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                    <form action="/movies/delete/<%= movie.id %>?_method=DELETE" method="POST">
+                                                        <button type="submit" class="btn btn-outline-danger">Eliminar</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                  </table>
+            </div>
+        </div>
+    </div>
+    <!-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>
