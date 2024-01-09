@@ -22,7 +22,7 @@
                 <p class="pt-3">/ Editar Película</p>
               </div>
               <div class="card-body">
-                <form action="/movies/update/<%= movie.id %>?_method=PUT" method="POST" class="row">
+                <form action="/movies/update/<%= movie.id %>?_method=PUT" method="POST" class="row" enctype="multipart/form-data">
                     <div class="col-12 col-md-4 mb-3">
                         <label for="title" class="form-label">Title</label>
                         <input type="text" class="form-control <%= locals.errors && (errors.title && 'is-invalid') %>" id="title" name="title" value="<%= locals.errors ? (old.title && old.title): movie.title %>">
@@ -44,21 +44,21 @@
                             <%= locals.errors && (errors.awards && errors.awards.msg) %>
                           </small>
                     </div>
-                    <div class="col-12 col-md-4 mb-3">
+                    <div class="col-12 col-md-3 mb-3">
                         <label for="release_date" class="form-label">Release date</label>
                         <input type="date" class="form-control <%= locals.errors && (errors.release_date && 'is-invalid') %>" id="release_date"  name="release_date" value="<%= locals.errors ? (old.release_date && old.release_date) : moment(movie.release_date).format("YYYY-MM-DD") %>">
                         <small class="text-danger ms-2">
                             <%= locals.errors && (errors.release_date && errors.release_date.msg) %>
                           </small>
                     </div>
-                    <div class="col-12 col-md-4 mb-3">
+                    <div class="col-12 col-md-3 mb-3">
                         <label for="length" class="form-label">Lenght</label>
                         <input type="number" class="form-control <%= locals.errors && (errors.length && 'is-invalid') %>" id="length"  name="length" value="<%= locals.errors ? (old.length && old.length) : movie.length %>">
                         <small class="text-danger ms-2">
                             <%= locals.errors && (errors.length && errors.length.msg) %>
                           </small>
                     </div>
-                    <div class="col-12 col-md-4 mb-3">
+                    <div class="col-12 col-md-3 mb-3">
                         <label class="form-label" for="genreID">Genre </label>
                         <select class="form-select <%= locals.errors && (errors.genre_id && 'is-invalid') %>" name="genre_id" id="genreID" >
                             <option value="" disabled selected>- select genre - </option>
@@ -66,6 +66,11 @@
                             <option value="<%= genre.id %>" <%= locals.old ? (locals.old.genre_id == genre.id && 'selected') : movie.genre_id == genre.id && 'selected' %>><%= genre.name %></option>
                             <% }); %>
                         </select>
+                    </div>
+                    <div class="col-12 col-md-3 mb-3">
+                        <label for="image" class=" form-label">Imagen</label>
+                        <input class="form-control" type="file" name="image" id="image"
+                             />
                     </div>
                     <div class="mb-3 md-col-12">
                         <h5 class="form-label">Actores</h5>

@@ -1,10 +1,16 @@
 const path = require('path');
+const fetch = require('node-fetch');
 const db = require('../database/models');
 const sequelize = db.sequelize;
 const { Op } = require("sequelize");
 const moment = require('moment')
 const {validationResult} = require('express-validator');
-const { error } = require('console');
+const { error, count } = require('console');
+const paginate = require('express-paginate')
+const axios = require('axios');
+const { url } = require('inspector');
+const { response } = require('express');
+const translatte = require('translatte')
 
 //Aqui tienen una forma de llamar a cada uno de los modelos
 // const {Movies,Genres,Actor} = require('../database/models');
@@ -14,24 +20,41 @@ const Movies = db.Movie;
 const Genres = db.Genre;
 const Actors = db.Actor;
 
+const URL_BASE = 'http://www.omdbapi.com/?apikey=ef2ac129';
 
 const moviesController = {
     list: (req, res) => {
-        const genres = db.Genre.findAll();
-        const movies = db.Movie.findAll({
-            include: ['genre']
-        })
 
+        
+        const genres = db.Genre.findAll();
+        const movies = db.Movie.findAndCountAll({
+            include: ['genre'],
+            limit:req.query.limit,
+            offset:req.skip
+        })
+        
         Promise.all([genres, movies])
-            .then(([genres,movies]) => {
-                // res.send(movies)
-                res.render('moviesList.ejs', {movies, genres})
+        .then(([genres,movies]) => {
+            // res.send(movies)
+            let {count, rows} = movies;
+            // return res.send(rows)
+            const pagesCount = Math.ceil(count/req.query.limit)
+                res.render('moviesList.ejs', {
+                    movies:rows, 
+                    genres,
+                    pages: paginate.getArrayPages(req)(pagesCount, pagesCount, req.query.page),
+                    paginate,
+                    pagesCount,
+                    currentPages: req.query.page,
+                    result:false,
+                    resultApi:false
+                })
             })
     },
     detail: (req, res) => {
 
         db.Movie.findByPk(req.params.id,{
-            include: ['actors']
+            include: ['actors','genre']
         })
             .then(movie => {
                 // return res.send(movie)
@@ -61,6 +84,89 @@ const moviesController = {
             .then(movies => {
                 res.render('recommendedMovies.ejs', {movies});
             });
+    },
+    search: (req,res) => {
+        const keyword = req.query.title;
+        db.Movie.findAll({
+            where:{
+                title:{
+                    [Op.substring]:keyword
+                }
+            }
+        })
+        .then(movies => {
+
+            if(!movies.length){
+                axios.get(`${URL_BASE}&t=${keyword}`)
+                    .then(async response =>{
+                        // return res.send(response.data)
+                        const {Title,Released,Genre,Awards,Poster,Ratings, Runtime  } = response.data;
+
+                        const awardsArray = Awards.match(/\d+/g);
+                        // return res.send(awardsArray)
+                        const awardsParseado = awardsArray.map(award => +award)
+                        const awards = awardsParseado.reduce((acum,num)=> acum + +num, 0)
+
+                        const rating  = Ratings[0].Value.split('/')[0];        
+                        const release_date = moment(Released).toDate();
+                        const image = Poster;
+                        const length = +Runtime.match(/\d+/g);
+                        // return res.send(length)
+                        const genres = await db.Genre.findAll();
+                        const newGenre = Genre.split(',')[0];
+                        let genre_id;
+
+                        if(newGenre){
+
+                            const {text} = await translatte(newGenre,{to:'es'})
+
+                            const genres = await db.Genre.findAll({order:[['ranking','DESC']]});
+                            
+                            const [genre,genreCreated] = await db.Genre.findOrCreate({
+                                where: {name:text},
+                                defaults:{
+                                    active:1,
+                                    ranking:genres[0].ranking + 1
+                                }
+                            });
+                            genre_id = genre.id
+
+                        }
+
+                        let newMovie = {
+                            title:Title,
+                            awards,
+                            rating, 
+                            release_date,
+                            genre_id,
+                            image,
+                            length
+                        }
+                        // return res.send(newMovie);
+                        db.Movie.create(newMovie)
+                            .then(() => {
+                                db.Movie.findAll({
+                                    where:{
+                                        title:{
+                                            [Op.substring] : keyword
+                                        }
+                                    }
+                                })
+                                    .then(movies => {
+                                        // return res.send(movies)
+                                        return res.render('moviesList',{movies,genres,result:1,pages:false});
+                                    })
+                            })
+                    })
+                    .catch(error => console.log(error))
+            } else{
+                db.Genre.findAll()
+                .then(genres => {
+                    return res.render('moviesList',{movies, result:true, genres,pages:false})
+                })
+            }
+            
+        })
     },
     //Aqui dispongo las rutas para trabajar con el CRUD
     add: function (req, res) {
@@ -174,7 +280,8 @@ const moviesController = {
                     release_date, 
                     awards, 
                     length,
-                    genre_id
+                    genre_id,
+                    image : req.file? req.file.filename : null
                 },
                 {
                     where:{

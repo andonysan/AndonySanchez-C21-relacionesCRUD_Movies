@@ -30,14 +30,19 @@
         <div class="card-body" >
             <div class="row ">
               <div class="col-md-4">
-                <img src="/img/<%= image %>" class="img-fluid rounded-start w-100" alt="...">
+                <img src="<%= /(https?|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/.test(image) ? image : `/img/${image}` %>" class="img-fluid rounded-start w-100" alt="...">
               </div>
               <div class="col-md-8">
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item fs-3"><b><%= title.toUpperCase() %></b></li>
-                    <li class="list-group-item"><b>RATING: </b><%= rating %></li>
-                    <li class="list-group-item"><b>AWARDS: </b><%= awards %></li>
-                    <li class="list-group-item"><b>LENGTH: </b><%= length + ' min'%></li>
+                    <li class="list-group-item"><b>Genero: </b><%= genre.name %></li>
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <span><b>Duración: </b><%= length + ' min'%></span>
+                            <span><b>Premios: </b><%= awards %></span>
+                            <span><b>Rating: </b><%= rating %></span>
+                        </div>
+                    </li>
                     <li class="list-group-item"><b>RELEASE DATE: </b><%= moment(release_date).format('DD/MM/YYYY') %> </li>
                 </ul>
                 <h5>Actores</h5>
